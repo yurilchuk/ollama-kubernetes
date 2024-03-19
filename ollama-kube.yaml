@@ -23,19 +23,18 @@ spec:
         name: ollama
     spec:
       containers:
-      - name: ollama
+      - env:
         image: ollama/ollama:latest
+        name: ollama
         ports:
-        - name: http
-          containerPort: 11434
-          protocol: TCP
+        - containerPort: 11434
         resources:
-            limits:
-              cpu: "2"
-              memory: "2Gi"
-            requests:
-              cpu: "300m"
-              memory: "256Mi"
+              limits:
+                cpu: "2"
+                memory: "2Gi"
+              requests:
+                cpu: "300m"
+                memory: "256Mi"  
       restartPolicy: Always
 status: {}
 
