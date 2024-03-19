@@ -29,13 +29,14 @@ spec:
         - name: http
           containerPort: 11434
           protocol: TCP
-      resources:
-          limits:
-            cpu: "2"
-            memory: "2Gi"
-          requests:
-            cpu: "300m"
-            memory: "256Mi"
+        resources:
+            limits:
+              cpu: "2"
+              memory: "2Gi"
+            requests:
+              cpu: "300m"
+              memory: "256Mi"
+      restartPolicy: Always
 status: {}
 
 ---
