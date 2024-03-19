@@ -1,0 +1,98 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ollama
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ollama-deployment
+  namespace: ollama
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      name: ollama
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        name: ollama
+    spec:
+      containers:
+      - name: ollama
+        image: ollama/ollama:latest
+        ports:
+        - name: http
+          containerPort: 11434
+          protocol: TCP
+      resources:
+          limits:
+            cpu: "2"
+            memory: "2Gi"
+          requests:
+            cpu: "300m"
+            memory: "256Mi"
+status: {}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ollama-service
+  namespace: ollama
+spec:
+  type: LoadBalancer
+  externalTrafficPolicy: Cluster
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 11434
+  selector:
+    name: ollama
+status: {}
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: ollama-ingressclass
+  namespace: ollama
+spec:
+  controller: nginx.org/ingress-controller 
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ollama-ingress
+  namespace: ollama
+spec:
+  defaultBackend:
+    service:
+      name: ollama-service
+      port:
+        number: 80
+  ingressClassName: ollama-ingressclass
+  tls:
+  - hosts:
+    - ollama.nb41.tech
+    secretName: ollama-secret
+  rules:
+  - host: ollama.nb41.tech
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: ollama-service
+            port:
+              number: 80
