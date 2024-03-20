@@ -29,7 +29,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   nfs: 
     path: "/storage/hd4/ollama"
-    server: "10.1.1.4"
+    server: "10.1.1.5"
 ---
 
 kind: PersistentVolumeClaim
