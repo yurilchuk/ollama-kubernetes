@@ -5,13 +5,55 @@ metadata:
 
 ---
 
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: ollama-sc
+  namespace: ollama
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: WaitForFirstConsumer
+
+---
+
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: ollama-data-pv
+  namespace: ollama
+spec:
+  storageClassName: ollama-sc
+  capacity:
+    storage: 128Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs: 
+    path: "/storage/hd4/ollama"
+    server: "10.1.1.4"
+---
+
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: ollama-data-pvc
+  namespace: ollama
+spec:
+  storageClassName: ollama-sc
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 128Gi
+
+---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ollama-deployment
   namespace: ollama
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       name: ollama
@@ -30,12 +72,19 @@ spec:
         - containerPort: 11434
         resources:
               limits:
-                cpu: "3"
-                memory: "12Gi"
+                cpu: "2"
+                memory: "6Gi"
               requests:
                 cpu: "300m"
                 memory: "2Gi"  
+        volumeMounts:
+        - mountPath: /root/.ollama
+          name: ollama-data
       restartPolicy: Always
+      volumes:
+      - name: ollama-data
+        persistentVolumeClaim:
+          claimName: ollama-data-pvc
 status: {}
 
 ---
