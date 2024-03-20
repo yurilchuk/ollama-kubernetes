@@ -11,7 +11,7 @@ metadata:
   name: ollama-deployment
   namespace: ollama
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       name: ollama
@@ -30,11 +30,11 @@ spec:
         - containerPort: 11434
         resources:
               limits:
-                cpu: "2"
-                memory: "2Gi"
+                cpu: "3"
+                memory: "12Gi"
               requests:
                 cpu: "300m"
-                memory: "256Mi"  
+                memory: "2Gi"  
       restartPolicy: Always
 status: {}
 
