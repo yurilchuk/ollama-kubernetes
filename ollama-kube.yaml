@@ -1,10 +1,3 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: ollama
-
----
-
 kind: StorageClass
 apiVersion: storage.k8s.io/v1
 metadata:
@@ -23,13 +16,13 @@ metadata:
 spec:
   storageClassName: ollama-sc
   capacity:
-    storage: 128Gi
+    storage: "<STORAGE>"
   accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
   nfs: 
-    path: "/storage/hd4/ollama"
-    server: "10.1.1.5"
+    path: "<NFS_PATH>"
+    server: "<SERVER_IP>"
 ---
 
 kind: PersistentVolumeClaim
@@ -43,7 +36,7 @@ spec:
     - ReadWriteMany
   resources:
     requests:
-      storage: 128Gi
+      storage: "<STORAGE>"
 
 ---
 

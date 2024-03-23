@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ollama
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ollama-config
+  namespace: ollama
+data:
+  nfs-path: "/storage/hd4/ollama"
+  server-ip: "10.1.1.5"
+  storage: "128Gi"
+
+---
