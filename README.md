@@ -32,7 +32,7 @@ curl -O https://raw.githubusercontent.com/yurilchuk/ollama-kubernetes/main/confi
 5. Torne o script executável:
 
 ```bash
-chmod +x configure.sh
+chmod +x config.sh
 ```
 
 6. Execute o script:
