@@ -4,9 +4,9 @@
 curl -O https://raw.githubusercontent.com/yurilchuk/ollama-kubernetes/main/ollama-kube.yaml
 
 # Obtenha os valores do ConfigMap
-NFS_PATH=$(kubectl get configmap ollama-config -o jsonpath='{.data.nfs-path}')
-SERVER_IP=$(kubectl get configmap ollama-config -o jsonpath='{.data.server-ip}')
-STORAGE=$(kubectl get configmap ollama-config -o jsonpath='{.data.storage}')
+NFS_PATH=$(kubectl get configmap ollama-config -o jsonpath='{.data.nfs-path}' -n ollama)
+SERVER_IP=$(kubectl get configmap ollama-config -o jsonpath='{.data.server-ip}' -n ollama)
+STORAGE=$(kubectl get configmap ollama-config -o jsonpath='{.data.storage}' -n ollama)
 
 # Substitua as variáveis no arquivo yaml
 sed -i "s|<NFS_PATH>|${NFS_PATH}|g" ollama-kube.yaml
