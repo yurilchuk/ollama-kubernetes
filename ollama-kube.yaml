@@ -60,7 +60,7 @@ spec:
       containers:
       - name: ollama
         image: ollama/ollama:latest
-        command: ["ollama", "serve", "--port", "11434"]
+        command: ["ollama", "serve"]
         ports:
         - containerPort: 11434
         resources:
