@@ -57,18 +57,14 @@ spec:
       labels:
         app: ollama
     spec:
-      initContainers:
-      - name: ollama-init
-        image: ollama/ollama:latest
-        command: ["ollama", "pull", "mistral/instruct:7b"]
-        volumeMounts:
-        - mountPath: /root/.ollama
-          name: ollama-data
       containers:
       - name: ollama
         image: ollama/ollama:latest
         ports:
         - containerPort: 11434
+        command: ["/bin/sh", "-c"]
+        args:
+          - ollama pull mistral/instruct:7b && ollama serve --port 11434
         resources:
           limits:
             cpu: "4"
