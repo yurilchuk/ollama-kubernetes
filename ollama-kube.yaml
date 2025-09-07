@@ -102,9 +102,9 @@ spec:
   type: LoadBalancer
   loadBalancerIP: 10.2.2.10
   ports:
-  - name: http
+  - name: tcp
     protocol: TCP
-    port: 80
-    targetPort: 11434
+    port: 11434       # porta externa do LB
+    targetPort: 11434 # porta do pod
   selector:
     app: ollama
