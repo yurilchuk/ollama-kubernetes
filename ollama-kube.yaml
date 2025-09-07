@@ -73,18 +73,6 @@ spec:
         volumeMounts:
         - mountPath: /root/.ollama
           name: ollama-data
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 11434
-          initialDelaySeconds: 10
-          periodSeconds: 10
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 11434
-          initialDelaySeconds: 30
-          periodSeconds: 20
       restartPolicy: Always
       volumes:
       - name: ollama-data
