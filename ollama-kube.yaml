@@ -60,15 +60,13 @@ spec:
       containers:
       - name: ollama
         image: ollama/ollama:latest
+        command: ["ollama", "serve", "--port", "11434"]
         ports:
         - containerPort: 11434
-        command: ["/bin/sh", "-c"]
-        args:
-          - ollama pull mistral/instruct:7b && ollama serve --port 11434
         resources:
           limits:
-            cpu: "4"
-            memory: "8Gi"
+            cpu: "6"
+            memory: "12Gi"
           requests:
             cpu: "1"
             memory: "2Gi"
