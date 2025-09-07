@@ -12,7 +12,6 @@ kind: PersistentVolume
 apiVersion: v1
 metadata:
   name: ollama-data-pv
-  namespace: ollama
 spec:
   storageClassName: ollama-sc
   capacity:
@@ -34,7 +33,7 @@ metadata:
 spec:
   storageClassName: ollama-sc
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   resources:
     requests:
       storage: "<STORAGE>"
