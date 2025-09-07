@@ -20,9 +20,10 @@ spec:
   accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
-  nfs: 
-    path: "<NFS_PATH>"
+  nfs:
+    path:   "<NFS_PATH>"
     server: "<SERVER_IP>"
+
 ---
 
 kind: PersistentVolumeClaim
@@ -33,7 +34,7 @@ metadata:
 spec:
   storageClassName: ollama-sc
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
       storage: "<STORAGE>"
@@ -46,39 +47,56 @@ metadata:
   name: ollama-deployment
   namespace: ollama
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
-      name: ollama
+      app: ollama
   strategy:
-    type: Recreate
+    type: RollingUpdate
   template:
     metadata:
       labels:
-        name: ollama
+        app: ollama
     spec:
-      containers:
-      - env:
+      initContainers:
+      - name: ollama-init
         image: ollama/ollama:latest
-        name: ollama
-        ports:
-        - containerPort: 11434
-        resources:
-              limits:
-                cpu: "2"
-                memory: "6Gi"
-              requests:
-                cpu: "300m"
-                memory: "2Gi"  
+        command: ["ollama", "pull", "mistral/instruct:7b"]
         volumeMounts:
         - mountPath: /root/.ollama
           name: ollama-data
+      containers:
+      - name: ollama
+        image: ollama/ollama:latest
+        ports:
+        - containerPort: 11434
+        resources:
+          limits:
+            cpu: "4"
+            memory: "8Gi"
+          requests:
+            cpu: "1"
+            memory: "2Gi"
+        volumeMounts:
+        - mountPath: /root/.ollama
+          name: ollama-data
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 11434
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 11434
+          initialDelaySeconds: 30
+          periodSeconds: 20
       restartPolicy: Always
       volumes:
       - name: ollama-data
         persistentVolumeClaim:
           claimName: ollama-data-pvc
-status: {}
 
 ---
 
@@ -89,52 +107,11 @@ metadata:
   namespace: ollama
 spec:
   type: LoadBalancer
-  externalTrafficPolicy: Cluster
+  loadBalancerIP: 10.2.2.10
   ports:
   - name: http
     protocol: TCP
     port: 80
     targetPort: 11434
   selector:
-    name: ollama
-status: {}
-
----
-
-apiVersion: networking.k8s.io/v1
-kind: IngressClass
-metadata:
-  name: ollama-ingressclass
-  namespace: ollama
-spec:
-  controller: nginx.org/ingress-controller 
-
----
-
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: ollama-ingress
-  namespace: ollama
-spec:
-  defaultBackend:
-    service:
-      name: ollama-service
-      port:
-        number: 80
-  ingressClassName: ollama-ingressclass
-  tls:
-  - hosts:
-    - ollama.nb41.tech
-    secretName: ollama-secret
-  rules:
-  - host: ollama.nb41.tech
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: ollama-service
-            port:
-              number: 80
+    app: ollama

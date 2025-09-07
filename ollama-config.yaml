@@ -11,6 +11,6 @@ metadata:
   name: ollama-config
   namespace: ollama
 data:
-  nfs-path: "/storage/hd4/ollama"
-  server-ip: "10.1.1.5"
+  nfs-path: "/storage/hd1/ollama"
+  server-ip: "10.1.1.2"
   storage: "128Gi"
