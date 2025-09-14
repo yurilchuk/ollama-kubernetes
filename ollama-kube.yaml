@@ -63,6 +63,9 @@ spec:
         command: ["ollama", "serve"]
         ports:
         - containerPort: 11434
+        env:
+        - name: CUDA_VISIBLE_DEVICES
+          value: "0"
         resources:
           limits:
             cpu: "6"
